@@ -84,7 +84,7 @@ namespace DynamicPanels
 			{
 				if( !idToTab.ContainsValue( tab ) )
 				{
-					tab.Internal.ChangeCloseButtonVisibility( m_onTabClosed != null );
+					tab.Internal.UpdateCloseButtonVisibility();
 
 					if( OnTabCreated != null )
 						OnTabCreated( tab );
@@ -158,6 +158,7 @@ namespace DynamicPanels
 			}
 		}
 
+		public static bool IsOnTabClosedBound => m_onTabClosed != null;
 		private static TabDelegate m_onTabClosed;
 		public static event TabDelegate OnTabClosed
 		{
@@ -165,13 +166,16 @@ namespace DynamicPanels
 			{
 				if( value != null )
 				{
-					if( m_onTabClosed == null )
+					bool wasOnTabClosedBound = IsOnTabClosedBound;
+					m_onTabClosed += value;
+					
+					if( !wasOnTabClosedBound )
 					{
 						foreach( PanelTab tab in idToTab.Values )
-							tab.Internal.ChangeCloseButtonVisibility( true );
+							tab.Internal.UpdateCloseButtonVisibility();
 					}
 
-					m_onTabClosed += value;
+					
 				}
 			}
 			remove
@@ -180,10 +184,10 @@ namespace DynamicPanels
 				{
 					m_onTabClosed -= value;
 
-					if( m_onTabClosed == null )
+					if( !IsOnTabClosedBound )
 					{
 						foreach( PanelTab tab in idToTab.Values )
-							tab.Internal.ChangeCloseButtonVisibility( false );
+							tab.Internal.UpdateCloseButtonVisibility();
 					}
 				}
 			}
