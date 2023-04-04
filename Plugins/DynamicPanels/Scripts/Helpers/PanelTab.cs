@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+using System;
+using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -28,7 +29,12 @@ namespace DynamicPanels
 				tab.MinSize = content.rect.size;
 			}
 
-			public void ChangeCloseButtonVisibility( bool isVisible )
+			public void UpdateCloseButtonVisibility()
+			{
+				SetCloseButtonVisibility(tab.IsOnClosedBound || PanelNotificationCenter.IsOnTabClosedBound);
+			}
+
+			private void SetCloseButtonVisibility( bool isVisible )
 			{
 				if( tab.closeButton && isVisible != tab.closeButton.gameObject.activeSelf )
 				{
@@ -51,6 +57,23 @@ namespace DynamicPanels
 			}
 
 			public void SetActive( bool activeState ) { tab.SetActive( activeState ); }
+		}
+		
+		public bool IsOnClosedBound => m_onClosed != null;
+		
+		private event Action<PanelTab> m_onClosed;
+		public event Action<PanelTab> OnClosed
+		{
+			add
+			{
+				if (!IsOnClosedBound) Internal.UpdateCloseButtonVisibility();
+				m_onClosed += value;
+			}
+			remove
+			{
+				m_onClosed -= value;
+				if (!IsOnClosedBound) Internal.UpdateCloseButtonVisibility();
+			}
 		}
 
 #pragma warning disable 0649
@@ -142,6 +165,7 @@ namespace DynamicPanels
 
 			iconHolder.preserveAspect = true;
 
+			closeButton.onClick.AddListener(() => m_onClosed?.Invoke(this));
 			closeButton.onClick.AddListener( () => PanelNotificationCenter.Internal.TabClosed( this ) );
 		}
 
