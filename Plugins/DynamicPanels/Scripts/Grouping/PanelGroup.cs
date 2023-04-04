@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DynamicPanels
 {
-	public class PanelGroup : IPanelGroupElement
+	public class PanelGroup : IPanelGroupElement, IEnumerable<IPanelGroupElement>
 	{
 		internal class InternalSettings
 		{
@@ -65,6 +66,15 @@ namespace DynamicPanels
 		public int Count { get { return elements.Count; } }
 		public IPanelGroupElement this[int index] { get { return elements[index]; } }
 
+		public IEnumerator<IPanelGroupElement> GetEnumerator()
+		{
+			for (int i = 0; i < Count; i++) {
+				yield return this[i];
+			}
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		
 		public PanelGroup( DynamicPanelsCanvas canvas, Direction direction )
 		{
 			Canvas = canvas;
@@ -529,6 +539,14 @@ namespace DynamicPanels
 			AddElementAt( index, afterElement );
 		}
 
+		public void Clear()
+		{
+			foreach (var element in this) {
+				element.Clear();
+				Debug.Log(element);
+			}
+		}
+
 		public void ResizeTo( Vector2 newSize, Direction horizontalDir = Direction.Right, Direction verticalDir = Direction.Bottom )
 		{
 			if( Group != null )
@@ -645,7 +663,7 @@ namespace DynamicPanels
 			Debug.Log( ToTree( 0, new System.Text.StringBuilder( 500 ) ) );
 		}
 
-		private string ToTree( int depth, System.Text.StringBuilder treeBuilder )
+		public string ToTree( int depth, System.Text.StringBuilder treeBuilder )
 		{
 			string prefix = string.Empty;
 			for( int i = 0; i <= depth; i++ )

@@ -10,6 +10,8 @@ namespace DynamicPanels
 		Vector2 Position { get; }
 		Vector2 Size { get; }
 		Vector2 MinSize { get; }
+		
+		void Clear();
 
 		void ResizeTo( Vector2 newSize, Direction horizontalDir = Direction.Right, Direction verticalDir = Direction.Bottom );
 

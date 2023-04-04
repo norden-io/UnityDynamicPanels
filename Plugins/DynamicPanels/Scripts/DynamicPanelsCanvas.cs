@@ -569,6 +569,22 @@ namespace DynamicPanels
 		{
 			PanelSerialization.DeserializeCanvas( this );
 		}
+		
+		[ContextMenu("Clear" )]
+		public void Clear()
+		{
+			RootPanelGroup?.Clear();
+			UnanchoredPanelGroup?.Clear();
+		}
+		
+		[ContextMenu("Print Hierarchy" )]
+		public void PrintHierarchy()
+		{
+			string root       = RootPanelGroup?.ToTree( 0, new System.Text.StringBuilder( 500 ) );
+			string unanchored = UnanchoredPanelGroup?.ToTree( 0, new System.Text.StringBuilder( 500 ) );
+			Debug.Log($"RootPanelGroup:\n{root}");
+			Debug.Log($"UnanchoredPanelGroup:\n{unanchored}");
+		}
 
 		void ISerializationCallbackReceiver.OnBeforeSerialize()
 		{

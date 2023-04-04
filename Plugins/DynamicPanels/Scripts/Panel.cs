@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -6,7 +7,7 @@ using UnityEngine.UI;
 namespace DynamicPanels
 {
 	[DisallowMultipleComponent]
-	public class Panel : MonoBehaviour, IPanelGroupElement
+	public class Panel : MonoBehaviour, IPanelGroupElement, IEnumerable<PanelTab>
 	{
 		internal class InternalSettings
 		{
@@ -328,6 +329,15 @@ namespace DynamicPanels
 					AddTab( value.Content, tabIndex );
 			}
 		}
+		
+		public IEnumerator<PanelTab> GetEnumerator()
+		{
+			for (int i = 0; i < NumberOfTabs; i++) {
+				yield return this[i];
+			}
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		private int m_activeTab = -1;
 		public int ActiveTab
@@ -534,6 +544,18 @@ namespace DynamicPanels
 			PanelNotificationCenter.TryGetTab( tabID, out tab );
 
 			RemoveTab( tab );
+		}
+		
+		public void Clear()
+		{
+			for (int i = tabs.Count - 1; i >= 0; i--) {
+				Internal.RemoveTab(i, true);
+			}
+			/*
+			foreach (PanelTab tab in tabs) Destroy(tab);
+			tabs.Clear();
+			Internal.RecalculateMinSize();
+			*/
 		}
 
 		public int GetTabIndex( RectTransform tabContent )
