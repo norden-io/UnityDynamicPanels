@@ -6,7 +6,7 @@ namespace DynamicPanels
 	{
 		internal static class Internal
 		{
-			public static Panel CreatePanel( RectTransform content, DynamicPanelsCanvas canvas )
+			public static Panel CreatePanel( RectTransform content, DynamicPanelsCanvas canvas, string tabName=null, Sprite tabIcon=null )
 			{
 				bool canvasWasNull = canvas == null;
 				if( canvasWasNull )
@@ -50,14 +50,17 @@ namespace DynamicPanels
 				else if( result.Canvas != canvas && !canvasWasNull )
 					canvas.UnanchoredPanelGroup.AddElement( result );
 
-				if( content != null )
-					result.AddTab( content );
+				if( content != null ) {
+					PanelTab tab = result.AddTab( content );
+					tab.Label = tabName;
+					tab.Icon  = tabIcon;
+				}
 
 				return result;
 			}
 		}
 
-		public static Panel CreatePanelFor( RectTransform content, DynamicPanelsCanvas canvas )
+		public static Panel CreatePanelFor( RectTransform content, DynamicPanelsCanvas canvas, string tabName=null, Sprite tabIcon=null )
 		{
 			if( !content )
 			{
@@ -65,7 +68,18 @@ namespace DynamicPanels
 				return null;
 			}
 
-			return Internal.CreatePanel( content, canvas );
+			return Internal.CreatePanel( content, canvas, tabName, tabIcon );
+		}
+
+		public static PanelTab CreatePanelTabFor( this DynamicPanelsCanvas canvas, RectTransform content, string tabName=null, Sprite tabIcon=null )
+		{
+			if ( !content )
+			{
+				Debug.LogError( "Content is null!" );
+				return null;
+			}
+			
+			return Internal.CreatePanel( content, canvas, tabName, tabIcon ).GetTab( content );
 		}
 
 		public static PanelTab GetAssociatedTab( RectTransform content )
