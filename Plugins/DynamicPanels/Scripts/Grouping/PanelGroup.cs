@@ -543,7 +543,6 @@ namespace DynamicPanels
 		{
 			foreach (var element in this) {
 				element.Clear();
-				Debug.Log(element);
 			}
 		}
 

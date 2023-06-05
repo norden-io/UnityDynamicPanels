@@ -6,7 +6,7 @@ namespace DynamicPanels
 	{
 		internal static class Internal
 		{
-			public static Panel CreatePanel( RectTransform content, DynamicPanelsCanvas canvas, string tabName=null, Sprite tabIcon=null )
+			public static Panel CreatePanel( RectTransform content, DynamicPanelsCanvas canvas, string tabLabel=null, Sprite tabIcon=null )
 			{
 				bool canvasWasNull = canvas == null;
 				if( canvasWasNull )
@@ -52,7 +52,7 @@ namespace DynamicPanels
 
 				if( content != null ) {
 					PanelTab tab = result.AddTab( content );
-					tab.Label = tabName;
+					tab.Label = tabLabel;
 					tab.Icon  = tabIcon;
 				}
 

@@ -445,7 +445,7 @@ namespace DynamicPanels
 			isQuitting = true;
 		}
 
-		public PanelTab AddTab( RectTransform tabContent, int tabIndex = -1 )
+		public PanelTab AddTab( RectTransform tabContent, int tabIndex = -1, string tabLabel=null, Sprite tabIcon=null )
 		{
 			if( !tabContent )
 				return null;
@@ -467,6 +467,8 @@ namespace DynamicPanels
 				if( !tab )
 				{
 					tab = (PanelTab) Instantiate( Resources.Load<PanelTab>( "DynamicPanelTab" ), tabsParent, false );
+					tab.Label = tabLabel;
+					tab.Icon = tabIcon;
 					tabs.Insert( tabIndex, tab );
 
 					newTabContentSize = tabContent.rect.size;
@@ -551,6 +553,7 @@ namespace DynamicPanels
 			for (int i = tabs.Count - 1; i >= 0; i--) {
 				Internal.RemoveTab(i, true);
 			}
+			Destroy(this);
 			/*
 			foreach (PanelTab tab in tabs) Destroy(tab);
 			tabs.Clear();
